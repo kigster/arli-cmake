@@ -1,132 +1,52 @@
-# This configuration file outlines some of the ways Arduino CMake
-# can be used. For a detailed explenation of all the options please
-# reade README.rst.
+cmake_minimum_required(VERSION 3.2.2)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(ARDUINO_DEFAULT_BOARD uno) # Default Board ID, when not specified
-set(ARDUINO_DEFAULT_PORT /dev/ttyUSB0) # Default Port, when not specified
+set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_LIST_DIR}/cmake)
 
-#====================================================================#
-# master_writer example from Wire library
-#====================================================================#
-GENERATE_ARDUINO_LIBRARY_EXAMPLE(wire_example
-        LIBRARY Wire
-        EXAMPLE master_writer
-        BOARD uno)
+set(ARDUINO_SDK_LIBRARY_PATH "${ARDUINO_SDK_PATH}/libraries")
+set(ARDUINO_SDK_HARDWARE_LIBRARY_PATH "${ARDUINO_SDK_PATH}/hardware/arduino/avr/libraries")
+set(ARDUINO_CUSTOM_LIBRARY_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src/libraries")
 
-# Alternative: by vairables
-#set(wire_example_LIBRARY Wire)
-#set(wire_example_EXAMPLE master_writer)
-#set(blink_example_BOARD uno)
-#generate_arduino_example(wire_example)
+# Import Arduino Toolchain
+set(CMAKE_TOOLCHAIN_FILE ${PROJECT_DIR}/cmake/ArduinoToolchain.cmake)
 
-#====================================================================#
-# Original blink example (from Arduino SDK examples)
-#====================================================================#
-GENERATE_ARDUINO_EXAMPLE(blink_example
-        CATEGORY Basics
-        EXAMPLE Blink
-        BOARD uno)
-
-# Alternative: by variables
-#set(blink_example_CATEGORY Basics)
-#set(blink_example_EXAMPLE Blink)
-#set(blink_example_PORT  /dev/ttyACM)
-#set(blink_example_BOARD uno)
-#
-#generate_arduino_firmware(blink_original)
-
-#====================================================================#
-# Original blink sketch (from Arduino SDK examples)
-#====================================================================#
-
-# Some installations have renamed the example directories
-if (EXISTS "${ARDUINO_SDK_PATH}/examples/01.Basics/Blink")
-    set(BLINK_SKETCH "${ARDUINO_SDK_PATH}/examples/01.Basics/Blink")
-    set(BLINK_FILE_SKETCH "${ARDUINO_SDK_PATH}/examples/01.Basics/Blink/Blink.ino")
-else ()
-    set(BLINK_SKETCH "${ARDUINO_SDK_PATH}/examples/1.Basics/Blink")
+if (NOT DEFINED ENV{BOARD_NAME})
+    set(ENV{BOARD_NAME} "uno")
 endif ()
 
-generate_arduino_firmware(blink_original
-        SKETCH "${BLINK_SKETCH}"
-        PORT /dev/ttyACM0
-        SERIAL picocom @SERIAL_PORT@
-        BOARD uno)
+message(STATUS "Board: $ENV{BOARD_NAME}")
+message(STATUS " NOTE: to override set env variable BOARD_NAME")
 
-GENERATE_ARDUINO_FIRMWARE(blink_file_original
-        SKETCH "${BLINK_FILE_SKETCH}"
-        BOARD uno)
+# Include Custom Functions
+include(Arli)
+include(DetectSerialUnixDevice)
 
-# Alternative: by variables
-#set(blink_original_SKETCH "${BLINK_SKETCH}")
-#set(blink_original_PORT  /dev/ttyACM)
-#set(blink_original_SERIAL picocom @SERIAL_PORT@)
-#set(blink_original_BOARD uno)
-#
-#generate_arduino_firmware(blink_original)
+# Special flags for some particular boards
+set(nano.build.mcu atmega328p)
+set(nano.upload.speed 57600)
 
+# Auto-detect from /dev
+detect_arduino_device()
 
-#====================================================================#
-# Bundled blink sketch example
-#====================================================================#
-generate_arduino_firmware(blink_bundled
-        SKETCH Blink
-        PROGRAMMER usbtinyisp
-        NO_AUTOLIBS)
+set(BOARD_DEVICE $ENV{BOARD_DEVICE})
+message(STATUS "Device [${BOARD_DEVICE}] have been selected.")
 
-# Alternative: by variables
-#set(blink_bundled_SKETCH Blink)
-#set(blink_bundled_PROGRAMMER usbtinyisp)
-#set(blink_bundled_NO_AUTOLIBS true)
-#
-#generate_arduino_firmware(blink_bundled)
+# These are Arduino provided libs we depend on
+set(ARDUINO_LIBRARIES Wire)
 
+include(Arlifile.cmake)
 
-#====================================================================#
-# Advanced static library exmaple
-#====================================================================#
-generate_arduino_library(blink_lib
-        SRCS blink_lib.cpp
-        HDRS blink_lib.h
-        BOARD uno)
+# Define various special flags on some libs
+set(ENV{Wire_HEADERS} utility/twi.h)
+set(ENV{Wire_SOURCES} utility/twi.c)
+set(ENV{Adafruit_Sensor_ONLY_HEADER} 1)
 
-# Alternative: by variables
-#set(blink_lib_SRCS blink_lib.cpp)
-#set(blink_lib_HDRS blink_lib.h)
-#set(blink_lib_BOARD uno)
-#
-#generate_arduino_library(blink_lib)
+project(WallClock3 C CXX)
 
+if ($ENV{DEBUG})
+    print_board_list()
+    print_programmer_list()
+endif ()
 
-#====================================================================#
-# Advanced firwmare example
-#====================================================================#
-generate_arduino_firmware(blink
-        SRCS blink.cpp
-        LIBS blink_lib
-        BOARD nano
-        BOARD_CPU atmega328
-        PORT com4
-        )
-
-# Alternative: by variables
-#set(blink_SRCS blink.cpp)
-#set(blink_LIBS blink_lib)
-#set(blink_BOARD uno)
-#
-#generate_arduino_firmware(blink)
-
-#====================================================================#
-# Avr library linkage without copying lib to local directory
-#====================================================================#
-GENERATE_ARDUINO_FIRMWARE(serial_lib
-        SRCS serial.cpp
-        ARDLIBS SoftwareSerial
-        BOARD uno)
-
-# Alternative: by variables
-#set(blink_SRCS serial.cpp)
-#set(blink_ARDLIBS SoftwareSerial)
-#set(blink_BOARD uno)
-#
-#generate_arduino_firmware(blink)
+add_subdirectory(src)   #add the example directory into build
