@@ -2,13 +2,16 @@
 
 set -e
 
-dep_dir="deps/arduino-cmake/cmake"
+dep_dir="deps/arduino-cmake"
+dep_url="https://github.com/arduino-cmake/arduino-cmake" 
+
+[[ -d ${dep_dir} ]] && rm -rf ${dep_dir}
 mkdir -p deps
-git clone git@github.com:arduino-cmake/arduino-cmake deps/arduino-cmake
-for file in $(ls -1 ${dep_dir}); do
+git clone ${dep_url} ${dep_dir}
+for file in $(ls -1 ${dep_dir}/cmake); do
   cd cmake
   echo linking ${file}...
-  ln -nfs ../${dep_dir}/$file
+  ln -nfs ../${dep_dir}/cmake/$file
   cd - > /dev/null
 done
 
