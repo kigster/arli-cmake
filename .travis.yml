@@ -13,9 +13,8 @@ addons:
       - binutils-avr
       - avr-libc
       - avrdude
+      - ruby
 before_install:
-  - git submodule update
-  - ./install.sh
   - |
     if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       export ARDUINO_SDK_FILE="arduino-$ARDUINO_SDK_VERSION-linux32.tar.xz"
@@ -33,10 +32,8 @@ before_install:
       export ARDUINO_SDK_PATH="$(pwd)/arduino-sdk/Arduino.app/Contents/Java"
     fi
 install:
-  - mkdir build
-  - rm -rf build/*
-  - cd build/
+  - gem install arli
 script:
-  - cmake -D ARDUINO_SDK_PATH="$ARDUINO_SDK_PATH" ..
-  - cat CMakeFiles/CMakeOutput.log
-  - make
+  - ./install.sh
+  - cd example/build/CMakeFiles
+  - cat CMakeOutput.log

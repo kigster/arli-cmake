@@ -1,6 +1,7 @@
 ### CMake template
 Arlifile.cmake
 example/libraries
+example/build
 deps/
 cmake/ArduinoToolchain.cmake
 cmake/Platform

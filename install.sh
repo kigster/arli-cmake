@@ -15,4 +15,12 @@ for file in $(ls -1 ${dep_dir}/cmake); do
   cd - > /dev/null
 done
 
+cd example
+arli bundle
+rm -rf build
+mkdir -p build
+cd build
+cmake ..
+make
+
 set +e
