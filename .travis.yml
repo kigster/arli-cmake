@@ -1,7 +1,7 @@
 cache:
   directories:
-    - arduino-sdk
-    - arduino-sdk-downloads
+   - /home/travis/arduino-sdk-downloads
+   - /home/travis/arduino-sdk
 language: c
 os:
   - linux
@@ -19,21 +19,24 @@ addons:
       - ruby
 before_install:
   - |
-    export DOWNLOAD_DIR=arduino-sdk-downloads
+    export DOWNLOAD_DIR=/home/travis/arduino-sdk-downloads
+    export SDK_DIR=/home/travis/arduino-sdk
     if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       export ARDUINO_SDK_FILE="arduino-$ARDUINO_SDK_VERSION-linux32.tar.xz"
     else
       export ARDUINO_SDK_FILE="arduino-$ARDUINO_SDK_VERSION-macosx.zip"
     fi
-  - [[ -f ${DOWNLOAD_DIR}/${ARDUINO_SDK_FILE} ]] || wget "https://downloads.arduino.cc/$ARDUINO_SDK_FILE" -O "${DOWNLOAD_DIR}/${ARDUINO_SDK_FILE}"
-  - mkdir arduino-sdk
   - |
-    if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-      tar xf "${DOWNLOAD_DIR}/$ARDUINO_SDK_FILE" -C arduino-sdk --strip-components 1
-      export ARDUINO_SDK_PATH="$(pwd)/arduino-sdk"
-    else
-      unzip "${DOWNLOAD_DIR}/$ARDUINO_SDK_FILE" "Arduino.app/Contents/Java/*" -d arduino-sdk
-      export ARDUINO_SDK_PATH="$(pwd)/arduino-sdk/Arduino.app/Contents/Java"
+    [[ -f ${DOWNLOAD_DIR}/${ARDUINO_SDK_FILE} ]] || wget "https://downloads.arduino.cc/$ARDUINO_SDK_FILE" -O "${DOWNLOAD_DIR}/${ARDUINO_SDK_FILE}"
+  - |
+    if [[ ! -d ${SDK_DIR} ]]; then
+      if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+        tar xf "${DOWNLOAD_DIR}/$ARDUINO_SDK_FILE" -C arduino-sdk --strip-components 1
+        export ARDUINO_SDK_PATH="$(pwd)/arduino-sdk"
+      else
+        unzip "${DOWNLOAD_DIR}/$ARDUINO_SDK_FILE" "Arduino.app/Contents/Java/*" -d arduino-sdk
+        export ARDUINO_SDK_PATH="$(pwd)/arduino-sdk/Arduino.app/Contents/Java"
+      fi
     fi
 script:
   - bin/setup
