@@ -16,11 +16,16 @@ The provided example in the `src` folder is a sketch that uses several Adafruit 
 
 ### Auto-Generate your Arduino Project
 
-`arli` offers the `generate` command, which uses this repo as a template, and creates a new project in a given local directory.
+`arli` offers a special command called `generate`, which uses this repo as a template for creating a brand new project in a given local directory.
 
-If you would like to use this repo as a template for your Arduino project, we highly recommend that you do this via `arli generate project --workspace DIR` — this is described on [`Arli`'s README on Github](https://github.com/kigster/arli).
+If you would like to use this repo as a template for your Arduino project, we highly recommend that you do this via:
 
-Having said that, you can also just clone/fork/modify it.
+```bash
+$ gem install arli
+$ arli generate MyProject --workspace ~/workspace
+```
+
+This operation is described on [`Arli`'s README on Github](https://github.com/kigster/arli#generate).
 
 ## Usage
 
@@ -47,7 +52,8 @@ This should download dependencies.
 The very basic build script can be used to build the project from the top level.
 
 ```bash
-$ bin/build
+$ bin/build example
+$ bin/build src
 ```
 
 ### Manual Build
@@ -55,10 +61,9 @@ $ bin/build
 Once you run the setup, manual build is:
 
 ```bash
+$ gem install arli
 $ cd src
-$ arli bundle
-$ mkdir build
-$ cd build
+$ rm -rf build && mkdir -p build && cd build
 $ cmake ..
 $ make
 ```
@@ -70,15 +75,13 @@ We build atop of arduino-cmake, which is installed by the `bin/setup` script.
 There are several helpers in the `cmake/Arli.cmake` file, which reduce amount of boilerplate code one has to write to include many libraries:
 
  * `arli_build_arduino_library(LIB LIB_SOURCE_PATH)` function builds a static library, and deals with some of the idiosyncracies of some libraries, such as libraries with a header only, etc.
- 
-
 
 ### Environment Variables
 
-Arli-Cmake allows you to override the BOARD type and the serial device using two Environment variables:
+`arli-cmake` allows you to override the BOARD type and the serial device using two Environment variables:
 
- * BOARD_NAME (defaults to 'uno')
- * DEVICE_NAME (defaults to auto-detection first, then /dev/null)
+ * `BOARD_NAME` (defaults to 'uno')
+ * `DEVICE_NAME` (defaults to auto-detection first, then /dev/null)
 
 #### Auto-Detection of the Serial Device
 
@@ -93,17 +96,16 @@ If this function finds exactly one matching device, it sets the `DEVICE_NAME`. I
 
 This function removes the need to manually choose the serial port, as long as you have only one board connected. Once you have more than one, you'd need to set this ENV variable before running CMAKE.
 
-### Dependency on arduino-cmake
+### Dependency on `arduino-cmake`
 
-The install script will clone arduino-cmake locally, and create symlinks from the cmake folder.
+The install script will clone `arduino-cmak` locally, and create symlinks from the cmake folder.
 
 This is likely a temporary solution. Another option is git submodule.
 
 ## CMAKE Helpers
 
-Please inspect the `cmake` folder to see additional helpers added on top of arduino-cmake.
-
+Please inspect the `cmake` folder to see additional helpers added on top of `arduino-cmake`.
+`
 ## LICENSE
 
 MIT
-

@@ -154,6 +154,29 @@ function(arli_set_env_or_default OUTPUT_VAR DEFAULT)
   endif()
 endfunction(arli_set_env_or_default)
 
+function(arli_ensure_arlifile_cmake SOURCE_FOLDER)
+  if (NOT EXISTS "${SOURCE_FOLDER}/Arlifile.cmake")
+    if (EXISTS "${SOURCE_FOLDER}/Arlifile")
+      message(STATUS "running arli bundle")
+      execute_process(
+        COMMAND "arli" "bundle"
+        WORKING_DIRECTORY ${SOURCE_FOLDER}
+        OUTPUT_VARIABLE ARLI_BUNDLE_STDOUT
+        RESULT_VARIABLE ARLI_BUNDLE_RESULT
+        ERROR_VARIABLE ARLI_BUNDLE_STDERR
+      OUTPUT_STRIP_TRAILING_WHITESPACE)
+      message(STATUS "Command Output: " ${ARLI_BUNDLE_STDOUT})
+    endif()
+  endif()
+
+  if (NOT EXISTS "${SOURCE_FOLDER}/Arlifile.cmake")
+    message(FATAL_ERROR
+      "Unable to generate Arlifile.cmake in ${SOURCE_FOLDER}."
+      "Please check that you have a recent ruby installed,"
+      "and that you installed 'arli' gem by running"
+      "`gem install arli`. If in doubt, run bin/setup!")
+  endif()
+endfunction(arli_ensure_arlifile_cmake)
 
 function(arli_build_all_libraries)
 
