@@ -42,3 +42,4 @@ before_install:
 script:
   - bin/setup
   - bin/build example 
+  - bin/build src

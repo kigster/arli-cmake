@@ -11,6 +11,7 @@ include(Arli)
 arli_ensure_arlifile_cmake( ${CMAKE_CURRENT_SOURCE_DIR})
 include(Arlifile.cmake)
 
+set(FIRMWARE_NAME ${PROJECT_NAME})
 set(PROJECT_SOURCES Adafruit7SDisplay.cpp)
 
 generate_arduino_firmware(
@@ -20,4 +21,5 @@ generate_arduino_firmware(
         BOARD ${BOARD_NAME}
         BOARD_CPU ${BOARD_CPU}
         PORT ${BOARD_DEVICE}
+        SERIAL screen @SERIAL_PORT@ 9600 -L
       )

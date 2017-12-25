@@ -11,13 +11,15 @@ include(Arli)
 arli_ensure_arlifile_cmake( ${CMAKE_CURRENT_SOURCE_DIR})
 include(Arlifile.cmake)
 
+set(FIRMWARE_NAME ${PROJECT_NAME})
 set(PROJECT_SOURCES MyProject.cpp)
 
 generate_arduino_firmware(
-  MyProjectFirmware
+  ${FIRMWARE_NAME}
   SRCS ${PROJECT_SOURCES}
   LIBS ${ARLI_CUSTOM_LIBS} ${ARLI_ARDUINO_HARDWARE_LIBS} ${ARLI_ARDUINO_LIBS}
   BOARD ${BOARD_NAME}
   BOARD_CPU ${BOARD_CPU}
   PORT ${BOARD_DEVICE}
+  SERIAL screen @SERIAL_PORT@ 9600 -L
 )
