@@ -19,4 +19,5 @@ generate_arduino_firmware(
         LIBS ${ARLI_CUSTOM_LIBS} ${ARLI_ARDUINO_HARDWARE_LIBS} ${ARLI_ARDUINO_LIBS}
         BOARD ${BOARD_NAME}
         BOARD_CPU ${BOARD_CPU}
+        PORT ${BOARD_DEVICE}
       )

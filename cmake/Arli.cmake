@@ -106,7 +106,7 @@ function(arli_detect_serial_device DEFAULT_DEVICE)
             set(BOARD_DEVICE ${DEFAULT_DEVICE} PARENT_SCOPE)
         elseif (${NUM_DEVICES} EQUAL 1)
             message(STATUS "Auto-detected 1 device ${BOARD_DEVICE}, continuing...")
-            set(BOARD_DEVICE ${BOARD_DEVICE}} PARENT_SCOPE)
+            set(BOARD_DEVICE ${BOARD_DEVICE} PARENT_SCOPE)
         else ()
             message(FATAL_ERROR "Too many devices have been detected!
                                  Force device by setting 'BOARD_DEVICE' variable,
