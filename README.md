@@ -13,13 +13,11 @@ The added value is that you can start right away without much understanding of h
 
 ### Added Features as Compared to Arduino-CMake
  
-This project compliments [arduino-cmake](https://github.com/arduino-cmake/arduino-cmake) in the following way:
-
-First of all, it provides an additional CMake library that offers the following:
+This project compliments [arduino-cmake](https://github.com/arduino-cmake/arduino-cmake) by providing additional CMake functions which offers the following features:
 
  * a comprehensive **third-party Arduino library installation**, download, compilation and linking into a static `.a.` library.
 
- * **automatic serial device detection** (that should work on Mac OSX and Unix, but unfortunately not on Windows). This feature is particularly useful if only one matching device is found — then you don't need to specify it manually. Plus, if you plug in another board, `cmake` will automatically detect the new serial device (just don't forget to remove the other board, as this only works when only device is plugged in).
+ * **automatic serial device detection** (that should work on Mac OSX and Unix, but unfortunately not on Windows). This feature is particularly useful if only one matching device is found — then you don't need to specify it manually. Plus, if you plug in another board, `cmake` will automatically detect the new serial device (just don't forget to remove the other board, as this only works when only one device is plugged in).
 
  * Alternatively, you can override board name, cpu and the Serial Port (device) by using these environment variables: 
 
@@ -37,19 +35,19 @@ First of all, it provides an additional CMake library that offers the following:
   * The `examples` folder contains a real example with a couple of library dependencies,
   * Tne `src` folder is basically a strippped down "template" project. It's also used as a template when you use Arli to generate a new project like so: 
 
-        ```
+       
         $ arli generate ProjectName -w ~/workspace
-        ```
+       
 
        the `src` folder will be your starting point in your new project, and `arli` will rename all the files for you to match your new project name.
 
 * There is a convenient shell script `bin/build` that expects a top-level folder as an argument, for example: 
+   
+        # usage: bin/build [ source folder ] 
+        $ bin/build example
+    
 
-    ```
-    bin/build example
-    ```
-
-   As part of the build process, CMake will run `arli bundle` inside your src folder, which genrates a CMake includue file `Arlifile.cmake`. This file contains all of the code necessary to build all external libraries.
+   As part of the build process, CMake will run `arli bundle` inside your src folder, which genrates a CMake includue file `Arlifile.cmake`. This file contains all of the code necessary to build all of the external libraries listed as dependencies in the `Arlifile`.
 
 ### Auto-Generate your next Arduino Project or Import Existing
 
@@ -73,7 +71,7 @@ $ bin/build src
 
 This should result in a successful build, if all dependenies are found and installed. Please create a [github issue](https://github.com/kigster/arli-cmake/issues) if you run into problems.
 
-Please see more details about the `generate` command at the [Arli](https://github.com/kigster/arli) repo on GitHub.
+The Readme for [Arli](https://github.com/kigster/arli#command-generate) CLI tool provides a detailed description of the `generate` command.
 
 
 ### Prerequisites
@@ -123,15 +121,15 @@ $ make
 
 ### Serial Monitor
  
-To connect to the serial monitor using utility `screen`, assuming your Ardunio device is currently connected, run this (replace 'MyProject' with the name of your project):
+To connect to the serial monitor using the TTY utility [`screen`](https://www.gnu.org/software/screen/), and assuming your Ardunio device is currently connected, run the following command (but replace 'MyProject' with the name of your project):
 
 ```bash
 make MyProject-serial
 ```
 
-> NOTE: To exit out of it, is usually Ctrl-A, followed by Ctrl-K, and then 'y' to kill the current session.
+> NOTE: To exit out of it, typically you would press Ctrl-A, followed by Ctrl-K, and then 'y' to kill the current session.
 > 
-> NOTE: While you have screen connected to your SerialPort, you will NOT be able to upload new firmware. Disconnect the monitor bdfore you do.
+> NOTE: While you have this screen connected to your serial port on your device, you will NOT be able to upload new firmware. **You must disconnect the screen before you attempt to upload a new firmware**.
 
 or in the case of the provided example:
 
