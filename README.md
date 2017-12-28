@@ -42,10 +42,9 @@ This project compliments [arduino-cmake](https://github.com/arduino-cmake/arduin
        the `src` folder will be your starting point in your new project, and `arli` will rename all the files for you to match your new project name.
 
 * There is a convenient shell script `bin/build` that expects a top-level folder as an argument, for example: 
-   
-        # usage: bin/build [ source folder ] 
-        $ bin/build example
-    
+
+          # usage: bin/build [ source folder ] 
+          $ bin/build example
 
    As part of the build process, CMake will run `arli bundle` inside your src folder, which genrates a CMake includue file `Arlifile.cmake`. This file contains all of the code necessary to build all of the external libraries listed as dependencies in the `Arlifile`.
 
