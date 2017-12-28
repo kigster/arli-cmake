@@ -43,10 +43,10 @@ This project compliments [arduino-cmake](https://github.com/arduino-cmake/arduin
 
 * There is a convenient shell script `bin/build` that expects a top-level folder as an argument, for example: 
 
-    ```bash
-    # usage: bin/build [ source folder ] 
-    $ bin/build example
-    ````
+  ```bash
+       # usage: bin/build [ source folder ] 
+       $ bin/build example
+  ````
 
    As part of the build process, CMake will run `arli bundle` inside your src folder, which genrates a CMake includue file `Arlifile.cmake`. This file contains all of the code necessary to build all of the external libraries listed as dependencies in the `Arlifile`.
 
