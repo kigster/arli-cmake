@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 #
 # © 2017 Konstantin Gredeskoul
- 
-[[ -d bin/lib ]] || { 
-  printf "Please run this script from the project's root\n"
+
+[[ -d bin/lib ]] || {
+printf "Please run this script from the project's root\n"
 exit 1
 }
 
@@ -11,7 +11,7 @@ source bin/lib/loader
 
 def_ruby_ver="2.4.2"
 dep_dir="./cmake/.arduino-cmake"
-dep_url="https://github.com/arduino-cmake/arduino-cmake" 
+dep_url="https://github.com/arduino-cmake/arduino-cmake"
 
 function setup::ruby::ruby-install() {
   local dir=$(pwd)
@@ -20,6 +20,7 @@ function setup::ruby::ruby-install() {
   run "tar -xzvf ruby-install-0.6.1.tar.gz"
   cd ruby-install-0.6.1/
   run "sudo make install"
+  cd ${dir}
 }
 
 function setup::ruby::install() {
@@ -43,6 +44,7 @@ function setup::git() {
 function setup::symlinks() {
   for file in $(ls -1 ${dep_dir}/cmake); do
     cd cmake
+    rm -rf ${file}
     run "ln -nfs ./.arduino-cmake/cmake/$file"
     cd - > /dev/null
   done
@@ -50,13 +52,13 @@ function setup::symlinks() {
 
 function setup::install::arli() {
   local ruby_version=$(ruby --version 2>/dev/null | awk '{print $2}')
-  
-  if [[ -z ${ruby_version} || ! ${ruby_version} =~ '2.' ]]; then 
+
+  if [[ -z ${ruby_version} || ! ${ruby_version} =~ '2.' ]]; then
     error "You do not have a recent Ruby version installed"
     info "I could install it for you... May I [Y/n]? "
     read a
     if [[ $a == '' || $a == 'y' || $a == 'Y' ]]; then
-      ok: 
+      ok:
       info "Alright then, let's do this :) "
       info "Installing Ruby ${def_ruby_ver}"
       setup::ruby::install "${def_ruby_ver}"
@@ -64,14 +66,16 @@ function setup::install::arli() {
     fi
   fi
 
-  if [[ $(which gem) =~ '/usr/' ]]; then
-    run "sudo gem install arli --no-rdoc --no-ri"
-  else
-    run "gem install arli --no-rdoc --no-ri"
+  if [[ -z $(gem list | egrep '^arli ') ]] ; then
+    if [[ $(which gem) =~ '/usr/' ]]; then
+      run "sudo gem install arli --no-rdoc --no-ri"
+    else
+      run "gem install arli --no-rdoc --no-ri"
+    fi
   fi
-} 
+}
 
-function setup() { 
+function setup() {
   setup::install::arli
   setup::git
   setup::symlinks
