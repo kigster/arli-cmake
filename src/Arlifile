@@ -6,12 +6,13 @@ device:
   board: uno
   cpu: atmega328p
   libraries:
-    hardware: 
+    hardware:
       - name: Wire
       - name: EEPROM
         headers_only: true
-    libraries:
+    arduino:
       - name: SD
 dependencies:
   - name: "Adafruit LED Backpack Library"
   - name: "Adafruit GFX Library"
+  - name: Time
