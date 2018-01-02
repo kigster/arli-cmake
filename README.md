@@ -114,13 +114,13 @@ The Readme for [Arli](https://github.com/kigster/arli#command-generate) CLI tool
 
 ### Prerequisites
 
- * On a Mac, you always need to run `xcode-select --install` before you can do any development. You must have `git` installed;
+ * On a Mac, you always need to run `xcode-select --install` before you can do any development. You must have `git` installed
 
- * Requires [CMake](https://cmake.org/download/);
+ * Requires [CMake](https://cmake.org/download/)
 
- * Requires Arduino IDE or SDK installed;
+ * Requires Arduino IDE or SDK installed
 
- * Requires ruby, 2.3 or 2.4+ installed. However, if you don't have it installed, the `bin/setup` script will prompt you to install it.
+ * Requires ruby, 2.3 or 2.4+ installed. However, if you don't have it installed, the `bin/setup` script will prompt you to install it.
 
 ### Install
 
