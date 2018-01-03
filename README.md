@@ -35,7 +35,7 @@ This project compliments [arduino-cmake](https://github.com/arduino-cmake/arduin
 
 There are two separate source folders provided:
   1. The `examples` folder contains a real example with a couple of library dependencies,
-  2. The `src` folder is basically a stripped down "template" project. 
+  2. The `src` folder is basically a stripped down "template" project.
 
 You may need to modify the top level `CMakeLists.txt` file to define with subdirectory is build, `src`, or `example`.
 
@@ -99,14 +99,58 @@ In this file you can define three types of dependent libraries:
 Note that each array member is a hash, that can contain `name`, `url`, `version` or any other attributes that define the library uniquely.
 
 > NOTE: to get the list of attributes, run `arli -A`
- 
+
+### Adding External Libraries
+
+Your repo contains `Arlifile` inside the `src` folder. Please [read the documentation](https://github.com/kigster/arli#command-bundle) about the format of `Arlifile`.
+
+Go ahead and edit that file, and under `dependencies:` you want to list all of your libraries by their exact name, and an optional version.
+
+The best way to do that is to **first search for the library** using the `arli search terms` command. Once you find the library you want, just copy it's name as is into `Arlifile`. If it contains spaces, put quotes around it.
+
+For example:
+
+```bash
+❯ arli search /adafruit.*bmp085/i
+
+Arli (1.0.2), Command: search
+Library Path: ~/Documents/Arduino/Libraries
+
+Adafruit BMP085 Library                         (1.0.0)    ( 1 total versions )
+Adafruit BMP085 Unified                         (1.0.0)    ( 1 total versions )
+———————————————————————
+  Total Versions : 2
+Unique Libraries : 2
+———————————————————————
+```
+
+You must grab the exact name, for example `Adafruit BMP085 Library` and add that to the `Arlifile`.
+
+If the library is not in the official database, just add it with a name and a url. Arli will use the url field to fetch it.
+
+To verify that your `Arlifile` can resolve all libraries, please run `arli bundle` inside the `src` folder. If Arli suceeds, you've got it right, and the `libraries` folder inside `src` should contain all referenced libraries.
+
 ### Adding Source Files
 
-Add your source files to `src` folder, and register them with `src/CMakeLists.txt`. 
+You will notice that inside `src/CMakeLists.txt` file, there is a line:
 
-### Adding Libraries
+```cmake
+set(PROJECT_SOURCES #{project_name}.cpp)
+```
 
-Add new library dependencies to `src/Arlifile`, in the `dependencies` array.
+If you add any additional source files or headers, just add their names right after, separated by spaces or newlines. For example:
+
+```cmake
+set(PROJECT_SOURCES
+  #{project_name}.cpp
+  #{project_name}.h
+  helpers/Loader.cpp
+  helpers/Loader.h
+  config/Configuration.h
+)
+```
+
+The should be all you need to do add custom logic and to rebuild and upload the project.
 
 ### Serial Monitor
 
