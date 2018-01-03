@@ -206,9 +206,9 @@ endfunction(arli_bundle)
 #=============================================================================#
 function(arli_bundle_command SOURCE_FOLDER)
   if (NOT EXISTS "${SOURCE_FOLDER}/Arlifile.cmake")
-    arli_bundle()
+    arli_bundle(${SOURCE_FOLDER})
   elseif("${SOURCE_FOLDER}/Arlifile" IS_NEWER_THAN "${SOURCE_FOLDER}/Arlifile.cmake")
-    arli_bundle()
+    arli_bundle(${SOURCE_FOLDER})
   endif()
 
   if (NOT EXISTS "${SOURCE_FOLDER}/Arlifile.cmake")

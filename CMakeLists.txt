@@ -16,7 +16,7 @@ include(Arli)
 arli_setup(${CMAKE_CURRENT_SOURCE_DIR})
 
 set(CMAKE_TOOLCHAIN_FILE cmake/ArduinoToolchain.cmake)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -w")
 set(CMAKE_LOCAL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cmake/)
 
 cmake_minimum_required(VERSION 2.8)
