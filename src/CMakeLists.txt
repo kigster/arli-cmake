@@ -11,7 +11,7 @@
 #=============================================================================#
 
 include(Arli)
-arli_ensure_arlifile_cmake( ${CMAKE_CURRENT_SOURCE_DIR})
+arli_bundle_command(${CMAKE_CURRENT_SOURCE_DIR})
 include(Arlifile.cmake)
 
 set(FIRMWARE_NAME ${PROJECT_NAME})

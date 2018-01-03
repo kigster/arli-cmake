@@ -9,7 +9,10 @@ set +e
 source bin/lib/loader
 set -e
 
+export def_ruby_ver="2.4.2"
+export dep_dir="./cmake/.arduino-cmake"
+export dep_url="https://github.com/arduino-cmake/arduino-cmake"
 export root=$(pwd)
 
 help $@
-build $@
+setup

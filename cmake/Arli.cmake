@@ -2,11 +2,7 @@
 # Author:    Konstantin Gredeskoul (kigster)
 # Home:      https://github.com/kigster/arli-cmake
 # License:   MIT
-# Copyright: (C) 2017 Konstantin Gredeskoul
-#=============================================================================#
-
-
-
+#
 #=============================================================================#
 # prepend
 # [PUBLIC]
@@ -133,7 +129,6 @@ function(arli_detect_board DEFAULT_BOARD_NAME DEFAULT_BOARD_CPU)
   set(BOARD_CPU ${BOARD_CPU} PARENT_SCOPE)
 endfunction(arli_detect_board)
 
-
 #=============================================================================#
 # arli_set_env_or_default
 # [PUBLIC]
@@ -154,7 +149,39 @@ function(arli_set_env_or_default OUTPUT_VAR DEFAULT)
   endif()
 endfunction(arli_set_env_or_default)
 
-function(arli_bundle)
+#=============================================================================#
+# arli_setup
+# [PUBLIC]
+#
+# arli_setup SOURCE_FOLDER
+#
+# Runs bin/setup if arduino-cmake is not installed.
+#=============================================================================#
+function(arli_setup SOURCE_FOLDER)
+  if (NOT EXISTS ${SOURCE_FOLDER}/cmake/ArduinoToolchain.cmake)
+    message(STATUS "Setting up Project Dependencies...")
+    execute_process(
+      COMMAND "bash" "bin/setup"
+      WORKING_DIRECTORY ${SOURCE_FOLDER}
+      OUTPUT_VARIABLE ARLI_SETUP_STDOUT
+      RESULT_VARIABLE ARLI_SETUP_RESULT
+      ERROR_VARIABLE ARLI_SETUP_STDERR
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+    message(STATUS "Setup Output:\n" ${ARLI_SETUP_STDOUT})
+  endif()
+endfunction(arli_setup)
+
+
+#=============================================================================#
+# arli_bundle
+# [PRIVATE]
+#
+# arli_bundle SOURCE_FOLDER
+#
+# Runs arli bundle if Arlifile.cmake does not exist or
+# Arlifile is newer.
+#=============================================================================#
+function(arli_bundle SOURCE_FOLDER)
   if (EXISTS "${SOURCE_FOLDER}/Arlifile")
     message(STATUS "running arli bundle")
     execute_process(
@@ -168,7 +195,16 @@ function(arli_bundle)
   endif()
 endfunction(arli_bundle)
 
-function(arli_ensure_arlifile_cmake SOURCE_FOLDER)
+#=============================================================================#
+# arli_bundle_command
+# [PUBLIC]
+#
+# arli_bundle SOURCE_FOLDER
+#
+# Runs arli bundle if Arlifile.cmake does not exist or
+# Arlifile is newer.
+#=============================================================================#
+function(arli_bundle_command SOURCE_FOLDER)
   if (NOT EXISTS "${SOURCE_FOLDER}/Arlifile.cmake")
     arli_bundle()
   elseif("${SOURCE_FOLDER}/Arlifile" IS_NEWER_THAN "${SOURCE_FOLDER}/Arlifile.cmake")
@@ -177,31 +213,40 @@ function(arli_ensure_arlifile_cmake SOURCE_FOLDER)
 
   if (NOT EXISTS "${SOURCE_FOLDER}/Arlifile.cmake")
     message(FATAL_ERROR
-      "Unable to generate Arlifile.cmake in ${SOURCE_FOLDER}."
-      "Please check that you have a recent ruby installed,"
-      "and that you installed 'arli' gem by running"
-    "`gem install arli`. If in doubt, run bin/setup!")
-    endif()
-  endfunction(arli_ensure_arlifile_cmake)
+      "Unable to generate Arlifile.cmake in ${SOURCE_FOLDER}
+       Please check that you have a recent ruby installed
+       and that you installed 'arli' gem by running
+      'gem install arli'. If in doubt, run bin/setup!"
+    )
+  endif()
+endfunction(arli_bundle_command)
 
-  function(arli_build_all_libraries)
 
-    set(ARDUINO_SDK_HARDWARE_LIBRARY_PATH "${ARDUINO_SDK_PATH}/hardware/arduino/avr/libraries")
-    set(ARDUINO_SDK_LIBRARY_PATH "${ARDUINO_SDK_PATH}/libraries")
-    set(ARDUINO_CUSTOM_LIBRARY_PATH "${ARLI_CUSTOM_LIBS_PATH}")
-    #
-    # set(ENV{Wire_HEADERS} utility/twi.h)
-    # set(ENV{Wire_SOURCES} utility/twi.c)
+#=============================================================================#
+# arli_build_all_libraries
+# [PUBLIC]
+#
+# arli_build_all_libraries
+#
+# Builds all libraries.
+#=============================================================================#
+function(arli_build_all_libraries)
+  set(ARDUINO_SDK_HARDWARE_LIBRARY_PATH "${ARDUINO_SDK_PATH}/hardware/arduino/avr/libraries")
+  set(ARDUINO_SDK_LIBRARY_PATH "${ARDUINO_SDK_PATH}/libraries")
+  set(ARDUINO_CUSTOM_LIBRARY_PATH "${ARLI_CUSTOM_LIBS_PATH}")
 
-    FOREACH(LIB ${ARLI_CUSTOM_LIBS})
-      arli_build_arduino_library(${LIB} "${ARDUINO_CUSTOM_LIBRARY_PATH}/${LIB}")
-    ENDFOREACH(LIB)
+  set(ENV{Wire_HEADERS} utility/twi.h)
+  set(ENV{Wire_SOURCES} utility/twi.c)
 
-    FOREACH(LIB ${ARLI_ARDUINO_HARDWARE_LIBS})
-      arli_build_arduino_library(${LIB} "${ARDUINO_SDK_HARDWARE_LIBRARY_PATH}/${LIB}/src")
-    ENDFOREACH(LIB)
+  FOREACH(LIB ${ARLI_CUSTOM_LIBS})
+    arli_build_arduino_library(${LIB} "${ARDUINO_CUSTOM_LIBRARY_PATH}/${LIB}")
+  ENDFOREACH(LIB)
 
-    FOREACH(LIB ${ARLI_ARDUINO_LIBS})
-      arli_build_arduino_library(${LIB} "${ARDUINO_SDK_LIBRARY_PATH}/${LIB}/src")
-    ENDFOREACH(LIB)
-  endfunction(arli_build_all_libraries)
+  FOREACH(LIB ${ARLI_ARDUINO_HARDWARE_LIBS})
+    arli_build_arduino_library(${LIB} "${ARDUINO_SDK_HARDWARE_LIBRARY_PATH}/${LIB}/src")
+  ENDFOREACH(LIB)
+
+  FOREACH(LIB ${ARLI_ARDUINO_LIBS})
+    arli_build_arduino_library(${LIB} "${ARDUINO_SDK_LIBRARY_PATH}/${LIB}/src")
+  ENDFOREACH(LIB)
+endfunction(arli_build_all_libraries)
