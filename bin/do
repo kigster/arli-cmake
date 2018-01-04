@@ -1,0 +1,139 @@
+#!/usr/bin/env bash
+
+usage() {
+  printf "Usage: ${bldgrn}bin/do command [ options ] ${clr} \n"
+  echo
+  printf "Commands:\n"
+  printf "    ${bldblu}bin/do build${txtylw}   [ -w ] [ -u ] [ -b DIR ]
+                   [ -b BOARD ] [ -c CPU ] [ -d DEVICE ]
+                          • ${txtgrn}build the project in the build folder${clr}\n"
+
+  printf "    ${bldblu}bin/do setup ${txtylw}  [ -v ]   
+                          • ${txtgrn}install or update all the dependencies${clr}\n"
+                         
+  printf "    ${bldblu}bin/do bundle${txtylw}  [ -v ]   
+                          • ${txtgrn}install the libraries from Arlifile${clr}\n"
+
+  printf "    ${bldblu}bin/do clean ${txtylw}          
+                          • ${txtgrn}rm -rf ./build folder${clr}\n"
+  echo
+  printf "Options: \n"
+  printf "    -b | --build-dir DIR    Change build directory from default ./build\n"
+  printf "    -d | --device DEVICE    Full path to the USB serial device\n"
+  printf "    -c | --cpu CPU          CPU model of the board, eg. 'atmega328'\n"
+  printf "    -b | --board BOARD      Codename of the board, eg 'uno' or 'nano'\n"
+  printf "    -w | --wipe             Remove ./build folder before building\n"
+  printf "    -u | --upload           After building, upload the firmware\n"
+  printf "    -v | --verbose          Print additional information when available\n"
+  printf "    -h | --help             Show this help message\n"
+  exit 1
+}
+
+option_required() {
+  local name=$1
+  printf "${bldred}Error: option ${bldylw}${name}${bldred} requires an argument\n"
+  exit 1
+}
+
+[[ -z $* ]] && usage
+
+export true=1
+export false=0
+
+unset cli__opts
+declare -A cli__opts=(
+  [command]=
+  [build_dir]=./build
+  [wipe_build]=
+  [upload]=$false
+  [verbose]=$false
+  [device]=
+  [cpu]=
+  [board]=
+)
+
+while :; do
+  case $1 in
+    build|setup|bundle|clean)
+        cli__opts[command]=$1
+        shift;
+        ;;
+
+    -h|-\?|--help)
+        shift
+        usage
+        exit 0
+        ;;
+
+    -b|--build-dir)
+        shift
+        [[ -z $1 ]] && option_required 'build-dir'
+        cli__opts[build_dir]=$1
+        export BOARD_DEVICE=$1
+        shift
+        ;;
+
+    -d|--device)
+        shift
+        [[ -z $1 ]] && option_required 'device'
+        cli__opts[device]=$1
+        export BOARD_DEVICE=$1
+        shift
+        ;;
+
+    -c|--cpu)
+        shift
+        [[ -z $1 ]] && option_required 'cpu'
+        cli__opts[cpu]=$1
+        export BOARD_CPU=$1
+        shift
+        ;;
+
+    -d|--board)
+        shift
+        [[ -z $1 ]] && option_required 'board'
+        cli__opts[board]=$1
+        export BOARD_NAME=$1
+        shift
+        ;;
+
+    -u|--upload)
+        shift
+        cli__opts[upload]=$true
+        ;;
+
+    -w|--wipe)
+        shift
+        cli__opts[wipe]=$true
+        ;;
+
+    -v|--verbose)
+        shift
+        cli__opts[verbose]=$true
+        ;;
+
+    --)              # End of all options.
+        shift
+        break
+        ;;
+    -?*)
+        printf 'WARN: Unknown option (ignored): %s\n' "$1" >&2
+        exit 127
+        shift
+        ;;
+    *)               # Default case: If no more options then break out of the loop.
+        break
+        shift
+  esac
+done 
+
+echo
+printf "command    ${bldylw}${cli__opts[command]}${clr}\n"
+printf "build_dir  ${bldylw}${cli__opts[build_dir]}${clr}\n"
+printf "wipe_build ${bldylw}${cli__opts[wipe_build]}${clr}\n"
+printf "upload     ${bldylw}${cli__opts[upload]}${clr}\n"
+printf "verbose    ${bldylw}${cli__opts[verbose]}${clr}\n"
+printf "device     ${bldylw}${cli__opts[device]}${clr}\n"
+printf "cpu        ${bldylw}${cli__opts[cpu]}${clr}\n"
+printf "board      ${bldylw}${cli__opts[board]}${clr}\n"
+echo

@@ -3,16 +3,14 @@ version: 1.0.0
 libraries_path: "./libraries"
 lock_format: cmake
 device:
-  board: uno
-  cpu: atmega328p
+  board: nano
+  cpu: atmega328
   libraries:
     hardware:
       - name: Wire
-      - name: EEPROM
-        headers_only: true
-    arduino:
-      - name: SD
 dependencies:
-  - name: "Adafruit LED Backpack Library"
   - name: "Adafruit GFX Library"
+  - name: "Adafruit LED Backpack Library"
+    depends: 
+      - "Adafruit GFX Library"
   - name: "Time"

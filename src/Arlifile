@@ -13,6 +13,8 @@ device:
     arduino:
       - name: SD
 dependencies:
-  - name: "Adafruit LED Backpack Library"
   - name: "Adafruit GFX Library"
+  - name: "Adafruit LED Backpack Library"
+    depends: 
+      - "Adafruit GFX Library"
   - name: Time

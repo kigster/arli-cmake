@@ -39,9 +39,9 @@ FUNCTION(arli_build_arduino_library LIB LIB_SOURCE_PATH)
     set(LIB_SOURCE_PATH ${ARDUINO_SDK_PATH}/libraries)
   endif ()
 
-  set(${LIB}_RECURSE true)
+  set(${LIB}_RECURSE True)
 
-  include_directories(${LIB_SOURCE_PATH} ${LIB_SOURCE_PATH}/utility)
+  include_directories(${LIB_SOURCE_PATH} ${LIB_SOURCE_PATH}/utility ${LIB_SOURCE_PATH}/src)
   link_directories(${LIB_SOURCE_PATH})
 
   set(LIB_SOURCES $ENV{${LIB}_SOURCES})
@@ -54,21 +54,37 @@ FUNCTION(arli_build_arduino_library LIB LIB_SOURCE_PATH)
   prepend(LIB_HEADERS ${LIB_SOURCE_PATH} ${LIB_HEADERS})
 
   if (NOT DEFINED ${LIB}_ONLY_HEADER)
-    list(APPEND LIB_SOURCES ${LIB_SOURCE_PATH}/${LIB}.cpp)
+    if (EXISTS ${LIB_SOURCE_PATH}/${LIB}.cpp)
+      list(APPEND LIB_SOURCES ${LIB_SOURCE_PATH}/${LIB}.cpp)
+    elseif(EXISTS ${LIB_SOURCE_PATH}/src/${LIB}.cpp)
+      list(APPEND LIB_SOURCES ${LIB_SOURCE_PATH}/src/${LIB}.cpp)
+    endif()
   else()
-    list(APPEND LIB_SOURCES ${LIB_SOURCE_PATH}/${LIB}.h)
+    if (EXISTS ${LIB_SOURCE_PATH}/${LIB}.h)
+      list(APPEND LIB_SOURCES ${LIB_SOURCE_PATH}/${LIB}.h)
+    elseif(EXISTS ${LIB_SOURCE_PATH}/src/${LIB}.h)
+      list(APPEND LIB_SOURCES ${LIB_SOURCE_PATH}/src/${LIB}.h)
+    endif()
   endif()
 
   if (NOT LIB_SOURCES)
     set(LIB_SOURCES ${LIB_HEADERS})
   endif ()
 
+  if(DEFINED $ENV{DEBUG})
+    message(STATUS "generating library [${LIB}]")
+    if (DEFINED ${${LIB}_DEPENDS_ON_LIBS})
+      message(STATUS "${LIB} depends on ${${LIB}_DEPENDS_ON_LIBS}")
+    endif()
+  endif() 
+
   generate_arduino_library(${LIB}
     SRCS ${LIB_SOURCES}
     HDRS ${LIB_HEADERS}
+    LIBS ${${LIB}_DEPENDS_ON_LIBS}
     BOARD_CPU ${BOARD_CPU}
-  BOARD $ENV{BOARD_NAME})
-
+    BOARD ${BOARD_NAME})
+ 
 ENDFUNCTION(arli_build_arduino_library)
 
 #=============================================================================#
@@ -249,4 +265,6 @@ function(arli_build_all_libraries)
   FOREACH(LIB ${ARLI_ARDUINO_LIBS})
     arli_build_arduino_library(${LIB} "${ARDUINO_SDK_LIBRARY_PATH}/${LIB}/src")
   ENDFOREACH(LIB)
+
+
 endfunction(arli_build_all_libraries)

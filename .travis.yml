@@ -40,8 +40,10 @@ before_install:
       export ARDUINO_SDK_PATH="${SDK_DIR}/Arduino.app/Contents/Java"
     fi
 script:
-  - mkdir build
-  - cd build
-  - cmake ..
-  - make
-
+  - rm -rf build; mkdir -p build; cd build
+  - cmake ..; make
+  - cd ..
+  - sed -i 's/add_subdirectory(src)/add_subdirectory(example)/g' CMakeLists.txt
+  - rm -rf build; mkdir -p build; cd build
+  - cmake ..; make
+  - cd ..
