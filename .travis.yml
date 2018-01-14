@@ -43,7 +43,7 @@ script:
   - rm -rf build; mkdir -p build; cd build
   - cmake ..; make
   - cd ..
-  - sed -i 's/add_subdirectory(src)/add_subdirectory(example)/g' CMakeLists.txt
+  - sed -i -E 's/add_subdirectory\(src\)/add_subdirectory\(example\)/g' CMakeLists.txt
   - rm -rf build; mkdir -p build; cd build
   - cmake ..; make
   - cd ..

@@ -13,11 +13,10 @@
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 set(CMAKE_LOCAL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cmake/)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(ARDUINO_SDK_PATH /Applications/Arduino.app/Contents/Java)
 
 include(Arli)
 
-# runs bin/setup which installs Arli and other dependencies
-# as well as installs arduino-cmake
 arli_setup(${CMAKE_CURRENT_SOURCE_DIR})
 
 set(CMAKE_TOOLCHAIN_FILE cmake/ArduinoToolchain.cmake)
@@ -25,4 +24,7 @@ set(CMAKE_TOOLCHAIN_FILE cmake/ArduinoToolchain.cmake)
 cmake_minimum_required(VERSION 2.8)
 project(MyProject C CXX ASM)
 
-add_subdirectory(src)
+print_board_list()
+print_programmer_list()
+
+add_subdirectory(example)
