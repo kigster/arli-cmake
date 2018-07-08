@@ -19,6 +19,11 @@ include(Arli)
 
 arli_setup(${CMAKE_CURRENT_SOURCE_DIR})
 
+# These flags are required to ensure that the resulting binary is as small is it can be.
+# See: https://github.com/arduino-cmake/arduino-cmake/issues/67 for more info.
+set(ARDUINO_CXX_FLAGS "-w -g -std=c++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics")
+set(ARDUINO_LINKER_FLAGS "-w -g -fuse-linker-plugin -Wl,--gc-sections")
+
 set(CMAKE_TOOLCHAIN_FILE cmake/ArduinoToolchain.cmake)
 
 cmake_minimum_required(VERSION 2.8)
