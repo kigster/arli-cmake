@@ -29,9 +29,9 @@ function setup::install::arli() {
   if [[ -z $(gem list | egrep '^arli ') ]] ; then
     if [[ $(which gem) =~ '/usr/' ]]; then
       info "Please enter your password to install arli gem with sudo:"
-      run "sudo gem install arli --no-rdoc --no-ri"
+      run "sudo gem install arli"
     else
-      run "gem install arli --no-rdoc --no-ri"
+      run "gem install arli"
     fi
   fi
 }

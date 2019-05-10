@@ -41,10 +41,8 @@ before_install:
     fi
 script:
   - bin/setup
-  - rm -rf build; mkdir -p build; cd build
-  - cmake ..; make
-  - cd ..
+  - bin/build clean
+  - bin/build
   - sed -i -E 's/add_subdirectory\(src\)/add_subdirectory\(example\)/g' CMakeLists.txt
-  - rm -rf build; mkdir -p build; cd build
-  - cmake ..; make
-  - cd ..
+  - bin/build clean
+  - bin/build
