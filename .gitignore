@@ -1,5 +1,6 @@
 .idea
-9### CMake template
+
+### CMake template
 example/libraries
 example/build
 deps/
